@@ -4,8 +4,56 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strconv"
+
+	"go.uber.org/zap"
 )
 
 func main() {
-	fmt.Println("🤓")
+	os.Exit(start())
+}
+
+func start() int {
+	logEnv := getStringOrDefault("LOG_ENV", "development")
+	log, err := createLogger(logEnv)
+	if err != nil {
+		fmt.Println("Error setting up the logger", err)
+		return 1
+	}
+	defer func() {
+		_ = log.Sync()
+	}()
+	return 0
+}
+
+func createLogger(env string) (*zap.Logger, error) {
+	switch env {
+	case "production":
+		return zap.NewProduction()
+	case "development":
+		return zap.NewDevelopment()
+	default:
+		return zap.NewNop(), nil
+	}
+}
+
+func getStringOrDefault(name, defaultV string) string {
+	v, ok := os.LookupEnv(name)
+	if !ok {
+		return defaultV
+	}
+	return v
+}
+
+func getIntOrDefault(name string, defaultV int) int {
+	v, ok := os.LookupEnv(name)
+	if !ok {
+		return defaultV
+	}
+	vAsInt, err := strconv.Atoi(v)
+	if err != nil {
+		return defaultV
+	}
+	return vAsInt
 }
