@@ -11,4 +11,8 @@ require (
 	maragu.dev/gomponents-heroicons/v3 v3.0.0
 )
 
-require go.uber.org/multierr v1.11.0 // indirect
+require (
+	github.com/maragudk/gomponents v0.20.0 // indirect
+	github.com/maragudk/gomponents-heroicons v0.5.0 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
+)
